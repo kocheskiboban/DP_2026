@@ -1,0 +1,8 @@
+version: 1
+ingress:
+  - name: app
+    service: web        # the compose service to expose
+    port: 80            # Apache listens on port 80 inside the container
+    primary: true
+    access:
+      type: public      # anyone can open the site; "team" = only your team, "cas" = any FINKI login

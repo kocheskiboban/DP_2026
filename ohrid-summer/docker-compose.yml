@@ -1,0 +1,39 @@
+# Ohrid Summer — Docker Compose for RepoRun (https://reporun.finki.net.mk)
+# Environment value to set on the RepoRun stack page (not committed):
+#   DB_PASSWORD  — any long random password for the database
+# The database is created and filled automatically from database/schema.sql
+# on the first page load (includes/db.php).
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    cpus: 0.5
+    mem_limit: 256m
+    environment:
+      OS_DB_HOST: db
+      OS_DB_PORT: "3306"
+      OS_DB_NAME: ohrid_summer
+      OS_DB_USER: root
+      OS_DB_PASS: ${DB_PASSWORD}
+      OS_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .stack-data/uploads:/var/www/html/uploads
+
+  db:
+    image: mariadb:10.11
+    cpus: 0.5
+    mem_limit: 512m
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - .stack-data/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
