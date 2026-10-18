@@ -1,4 +1,3 @@
-# Ohrid Summer — web container (PHP 8.3 + Apache) for RepoRun / any Docker host
 FROM php:8.3-apache
 
 RUN docker-php-ext-install pdo_mysql mysqli \
